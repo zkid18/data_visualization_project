@@ -8,13 +8,6 @@ var margin = {left: 50, top: 10, right: 50, bottom: 10},
 	width = Math.min(screenWidth, 1000) - margin.left - margin.right,
 	height = Math.min(screenWidth, 800) - margin.top - margin.bottom;
 			
-var svg = d3.select("#chart").append("svg")
-			.attr("width", (width + margin.left + margin.right))
-			.attr("height", (height + margin.top + margin.bottom));
-			
-var wrapper = svg.append("g").attr("class", "chordWrapper")
-			.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");;
-			
 var outerRadius = Math.min(width, height) / 2  - 100,
 	innerRadius = outerRadius * 0.95,
 	pullOutSize = 50,
@@ -50,7 +43,7 @@ var respondents = 101049, //Total number of respondents (i.e. the number that ma
 	emptyStroke = Math.round(respondents*emptyPerc); //How many "units" would define this empty percentage
 
 var matrix_T1_T2 = [
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1118, 6, 1, 33, 238, 237, 41, 25, 118, 92, 123, 22, 77, 162, 3, 115, 376, 97, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1118, 6, 1, 33, 238, 237, 41, 25, 118, 92, 123, 22, 77, 162, 3, 115, 376, 97, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 488, 1, 238, 297, 121, 61, 91, 69, 195, 433, 23, 3, 97, 7, 51, 127, 113, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 15, 7, 16, 14, 5, 6, 6, 0, 4, 16, 1, 4, 0, 3, 10, 52, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 91, 14, 2300, 775, 492, 720, 323, 649, 140, 254, 274, 30, 323, 109, 84, 328, 549, 0],
@@ -134,7 +127,17 @@ var matrix_T2_T3 = [
 var offset = Math.PI * (emptyStroke/(respondents + emptyStroke)) / 2;
 
 
-function drawChordWithMatrix(matrix){
+function drawChordWithMatrix(matrix, id){
+
+
+  			
+var svg = d3.select(id).append("svg")
+			.attr("width", (width + margin.left + margin.right))
+			.attr("height", (height + margin.top + margin.bottom));
+		
+var wrapper = svg.append("g").attr("class", "chordWrapper")
+			.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
+
 	var offset = Math.PI * (emptyStroke/(respondents + emptyStroke)) / 2;
 
 	//create a chord layout object and then call additional methods on the layout object to change the default settings
@@ -142,7 +145,7 @@ function drawChordWithMatrix(matrix){
 		.padding(.02)
 		.sortSubgroups(d3.descending) //sort the chords inside an arc from high to low
 		.sortChords(d3.descending) //which chord should be shown on top when chords cross. Now the biggest chord is at the bottom
-		.matrix(matrix_T2_T3);
+		.matrix(matrix);
 
 	var arc = d3.svg.arc()
 		.innerRadius(innerRadius)
@@ -171,7 +174,6 @@ function drawChordWithMatrix(matrix){
 		.on("mouseover", fade(opacityLow))
 		.on("mouseout", fade(opacityDefault));
 
-
 	g.append("path")
 		.style("stroke", function(d,i) { return (Names[i] === '' ? "none" : (i > Names.length/2-1 ? "#00A1DE" : "#fad201")); })
 		.style("fill", function(d,i) { return (Names[i] === '' ? "none" : (i > Names.length/2-1 ? "#00A1DE" : "#fad201")); })
@@ -197,7 +199,7 @@ function drawChordWithMatrix(matrix){
 
 	//+ "translate(" + (innerRadius + 55) + ")"
 
-	////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 	//////////////////// Draw inner chords /////////////////////
 	////////////////////////////////////////////////////////////
 	 
@@ -216,9 +218,9 @@ function drawChordWithMatrix(matrix){
 		.on("mouseout", fade(opacityDefault));		
 
 
-	////////////////////////////////////////////////////////////
-	///////////////////////// Tooltip //////////////////////////
-	////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+///////////////////////// Tooltip //////////////////////////
+////////////////////////////////////////////////////////////
 
 	//Arcs
 	g.append("title")	
@@ -230,14 +232,6 @@ function drawChordWithMatrix(matrix){
 		.text(function(d) {
 			return [Math.round(d.source.value), " people from ", Names[d.target.index], " to ", Names[d.source.index]].join(""); 
 		});
-
-}
-
-function updateChordWithMatrix(matrix) {
-	d3.select('#chart').select("svg").remove()
-	svg = d3.select("#chart").transition()
-	drawChordWithMatrix(matrix)
-}
 
 ////////////////////////////////////////////////////////////
 ////////////////// Extra Functions /////////////////////////
@@ -265,30 +259,13 @@ function fadeOnChord(d) {
 		.style("opacity", function(d) {
 			return d.source.index === chosen.source.index && d.target.index === chosen.target.index ? opacityDefault : opacityLow;
 		});
-}//fadeOnChord
+}//fadeOnChord      
 
-// d3.select("#WomenOnlyButton").on("click", function () {
-//     drawChordWithMatrix(matrix_T1_T2);
-//     console.log("Women only");
-//     //enable other buttons, disable this one
-//     disableButton(this);
-// });
+}
 
-// d3.select("#MenOnlyButton").on("click", function() {
-// 	d3.select("#"+containerID).select("svg").remove();
-// 	var svg = d3.select("#"+containerID)
-//     drawChordWithMatrix(matrix_T2_T3);
-//     console.log("Men only");
-//     disableButton(this);
-// });
 
-// function disableButton(buttonNode) {
-//     d3.selectAll("button")
-//         .attr("disabled", function(d) {
-//             return this === buttonNode? "true": null;
-//         });
-// }
 
-drawChordWithMatrix(matrix_T1_T2)
-//window.onload(drawChordWithMatrix(matrix_T1_T2))
 
+
+drawChordWithMatrix(matrix_T1_T2, "#chart1")
+drawChordWithMatrix(matrix_T2_T3, "#chart2")

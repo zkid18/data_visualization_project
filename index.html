@@ -54,18 +54,18 @@
   	<input type="button" value="T1-T2" id="T1_T2"/> 
   	<input type="button" value="T2-T3" id="T2_T3"/> 
   	<div>
-  		<div id="chart"></div>
   		<div id="chart1"></div>
+  		<div id="chart2"></div>
 	</div>
 	<div id="includedContent"></div>
 
-	<script src="project.js"></script>
-	<script src="project1.js"></script>	
+	<script src="project_sample.js"></script>
 
 	<script type="text/javascript">
-	    var chart = document.getElementById('chart');
 	    var chart1 = document.getElementById('chart1');
-		chart1.style.display = 'none'
+	    var chart2 = document.getElementById('chart2');
+		chart2.style.display = 'none'
+		chart1.style.display = 'block'
 
 		var t1_t2 = document.getElementById('T1_T2');
 		var t2_t3 = document.getElementById('T2_T3');
@@ -76,26 +76,26 @@
 		t1_t2.onclick = function() {
 			t1_t2.disabled = true
 			t2_t3.disabled = false
-    		if (chart.style.display !== 'none') {
-        		chart.style.display = 'none';
-        		chart1.style.display = 'block'
+    		if (chart1.style.display !== 'none') {
+        		chart1.style.display = 'none';
+        		chart2.style.display = 'block'
     		}
     		else {
-        		chart.style.display = 'block';
-        		chart1.style.display = 'none';
+        		chart1.style.display = 'block';
+        		chart2.style.display = 'none';
     	}};
 
     	
 		t2_t3.onclick = function() {
 			t2_t3.disabled = true
 			t1_t2.disabled = false
-    		if (chart1.style.display !== 'none') {
-        		chart1.style.display = 'none';
-        		chart.style.display = 'block';
+    		if (chart2.style.display !== 'none') {
+        		chart2.style.display = 'none';
+        		chart1.style.display = 'block';
     		}
     		else {
-        		chart1.style.display = 'block';
-        		chart.style.display = 'none'
+        		chart2.style.display = 'block';
+        		chart1.style.display = 'none'
     	}};
 
 
